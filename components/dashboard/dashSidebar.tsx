@@ -16,15 +16,31 @@ const DashboardSideBar = () => {
 	const sidebarLinks = [
 		{
 			label: 'Overview',
-			href: '/overview',
+			href: '/dashboard',
 			icon: <HomeIcon />,
 		},
-		{ href: '/flour-intake', label: 'Flour Intake', icon: <Wheat /> },
-		{ href: '/production', label: 'Production Batches', icon: <Package /> },
-		{ href: '/qr-codes', label: 'QR Codes', icon: <QrCode /> },
-		{ href: '/analytics', label: 'Scan Analytics', icon: <BarChart3 /> },
-		{ href: '/fraud-alerts', label: 'Fraud Alerts', icon: <AlertTriangle /> },
-		{ href: '/activity-logs', label: 'Activity Logs', icon: <Activity /> },
+		{ href: '/dashboard/flour-intake', label: 'Flour Intake', icon: <Wheat /> },
+		{
+			href: '/dashboard/productionbatches',
+			label: 'Production Batches',
+			icon: <Package />,
+		},
+		{ href: '/dashboard/qr-codes', label: 'QR Codes', icon: <QrCode /> },
+		{
+			href: '/dashboard/analytics',
+			label: 'Scan Analytics',
+			icon: <BarChart3 />,
+		},
+		{
+			href: '/dashboard/fraud-alerts',
+			label: 'Fraud Alerts',
+			icon: <AlertTriangle />,
+		},
+		{
+			href: '/dashboard/activity-logs',
+			label: 'Activity Logs',
+			icon: <Activity />,
+		},
 	];
 
 	return (
