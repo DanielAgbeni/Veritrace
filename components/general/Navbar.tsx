@@ -18,7 +18,7 @@ const Navbar = () => {
                   Consumer Portal
                 </Button>
               </Link>
-              <Link href="/dashboard">
+              <Link href="/auth/login">
                 <Button className="cursor-pointer">
                   Manufacturer Dashboard
                 </Button>
