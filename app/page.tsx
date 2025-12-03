@@ -1,7 +1,15 @@
+import Cta from "@/components/home/Cta";
+import Features from "@/components/home/features";
+import Footer from "@/components/home/Footer";
+import HeroComponent from "@/components/home/hero";
+
 export default function Home() {
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-			|<p>Welcome to Next JS</p>
+		<div>
+		<HeroComponent />
+		<Features />
+		<Cta />
+		<Footer />
 		</div>
 	);
 }
