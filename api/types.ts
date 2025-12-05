@@ -16,6 +16,11 @@ declare global {
 		totalPage: number;
 	};
 
+	export type AuthResponseType = {
+		message: string;
+		token: string;
+	};
+
 	export type ResultPaginationType = {
 		meta: MetaType;
 		pagination: PaginationType;
@@ -41,5 +46,3 @@ declare global {
 
 	export type ApiErrorResponseType = AxiosError<ErrorResponseType>;
 }
-
-export {};
