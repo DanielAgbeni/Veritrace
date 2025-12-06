@@ -1,6 +1,6 @@
 import DashboardLayout from '@/components/dashboard/dashboardLayout'
+import protectRoute from '@/lib/protectedRoutes'
 import { QrCode } from 'lucide-react'
-import React from 'react'
 
 const QrCodes = () => {
   return (
@@ -35,4 +35,4 @@ const QrCodes = () => {
   )
 }
 
-export default QrCodes
+export default protectRoute(QrCodes)

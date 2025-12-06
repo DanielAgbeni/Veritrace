@@ -1,11 +1,15 @@
+'use client'
 import React from 'react'
 import MainContainer from './maincontainer'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 import Image from 'next/image'
 import { icon } from '@/public/assets'
+import { useStore } from '@/lib/useStore'
 
 const Navbar = () => {
+  const {user} = useStore()
+  console.log(user)
   return (
     
       <MainContainer>
@@ -18,7 +22,7 @@ const Navbar = () => {
                   Consumer Portal
                 </Button>
               </Link>
-              <Link href="/auth/login">
+              <Link href={user ? "/dashboard" : "/auth/login"}>
                 <Button className="cursor-pointer">
                   Manufacturer Dashboard
                 </Button>

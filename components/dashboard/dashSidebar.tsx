@@ -68,13 +68,13 @@ const DashboardSideBar = () => {
 			} shrink-0`}>
 			<div className="p-4 border-b border-gray-100 flex items-center justify-between">
 				{!isCollapsed && (
-					<div className="flex items-center gap-2">
+					<Link href="/" className="flex items-center gap-2">
 						<Image
 							src={icon}
 							alt="Veritrace"
 							className="w-32"
 						/>
-					</div>
+					</Link>
 				)}
 				<button
 					onClick={() => setIsCollapsed(!isCollapsed)}

@@ -1,4 +1,6 @@
+'use client'
 import DashboardLayout from '@/components/dashboard/dashboardLayout';
+import protectRoute from '@/lib/protectedRoutes';
 import React from 'react';
 
 const ProductionBatch = () => {
@@ -125,4 +127,4 @@ const ProductionBatch = () => {
 	);
 };
 
-export default ProductionBatch;
+export default protectRoute(ProductionBatch);

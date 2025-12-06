@@ -1,4 +1,6 @@
+'use client'
 import DashboardLayout from '@/components/dashboard/dashboardLayout';
+import protectRoute from '@/lib/protectedRoutes';
 import React from 'react';
 
 const FlourIntake = () => {
@@ -118,4 +120,4 @@ const FlourIntake = () => {
 	);
 };
 
-export default FlourIntake;
+export default protectRoute(FlourIntake);

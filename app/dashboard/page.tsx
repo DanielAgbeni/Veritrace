@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/api';
+import protectRoute from '@/lib/protectedRoutes';
 
 const fetchDashboardStats = async () => {
 	const response = await api.get<DashboardResponseType>(
@@ -192,4 +193,4 @@ const Dashboard = () => {
 	);
 };
 
-export default Dashboard;
+export default protectRoute(Dashboard);

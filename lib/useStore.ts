@@ -16,12 +16,14 @@ type UserStore = {
 	setUser: (user: UserType) => void;
 	logout: () => void;
 	hydrate: () => void;
+	isHydrated: boolean;
 };
 
 export const useStore = create<UserStore>((set) => ({
 	user: null,
 	token: null,
 	isAuthenticated: false,
+	isHydrated: false,
 	setUser: (user) => set({ user, isAuthenticated: true }),
 	logout: () => {
 		if (typeof window !== 'undefined') {
@@ -43,6 +45,7 @@ export const useStore = create<UserStore>((set) => ({
 				user: null,
 				token: null,
 				isAuthenticated: false,
+				isHydrated: true,
 			});
 			return;
 		}
@@ -53,6 +56,7 @@ export const useStore = create<UserStore>((set) => ({
 				user,
 				token: accessToken,
 				isAuthenticated: true,
+				isHydrated: true,
 			});
 		} catch (error) {
 			console.error(error);
@@ -63,6 +67,7 @@ export const useStore = create<UserStore>((set) => ({
 				user: null,
 				token: null,
 				isAuthenticated: false,
+				isHydrated: true,
 			});
 		}
 	},
