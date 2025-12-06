@@ -9,7 +9,7 @@ const AuthHeader = ({ title, image }: { title: string; image?: string }) => {
 				src={image || icon}
 				alt="Veritrace"
 			/>
-			<h2 className="font-semibold text-2xl">Veritrace</h2>
+			{/* <h2 className="font-semibold text-2xl">Veritrace</h2> */}
 			<h1>{title}</h1>
 		</div>
 	);

@@ -1,6 +1,6 @@
 "use client";
-
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -9,27 +9,31 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/useStore";
 import { setHeaderAuthorization } from "@/api";
 
+interface SigninFormData {
+  email: string;
+  password: string;
+}
+
 const SigninForm = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<SigninFormData>({
+    mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const router = useRouter();
   const { setUser } = useStore();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();    
+  const onSubmit = async (data: SigninFormData) => {
     const payload = new FormData();
-    payload.append("companyMail", formData.email);
-    payload.append("password", formData.password);
+    payload.append("companyMail", data.email);
+    payload.append("password", data.password);
 
     try {
       const res = await signinUser(payload);
@@ -38,19 +42,18 @@ const SigninForm = () => {
       if (token && company) {
         localStorage.setItem("accessToken", token);
         setHeaderAuthorization(token);
-        
-        const user = {
-            id: company._id,
-            companyName: company.name,
-            email: company.mail,
-            logo: company.logo,
-            address: company.address,
-            productDescription: company.description,
-        };
 
+        const user = {
+          id: company._id,
+          companyName: company.name,
+          email: company.mail,
+          logo: company.logo,
+          address: company.address,
+          productDescription: company.description,
+        };
         localStorage.setItem("authUser", JSON.stringify(user));
         setUser(user);
-        
+
         router.push("/dashboard");
       }
     } catch (error) {
@@ -59,45 +62,67 @@ const SigninForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
+    <div className="w-full max-w-md space-y-4">
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium">
           Email
         </label>
         <Input
           id="email"
-          name="email"
           type="email"
           placeholder="Enter your email"
-          value={formData.email}
-          onChange={handleChange}
-          required
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "Invalid email address",
+            },
+          })}
+          className={errors.email ? "border-red-500" : ""}
         />
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
       </div>
+
       <div className="space-y-2">
         <label htmlFor="password" className="text-sm font-medium">
           Password
         </label>
         <Input
           id="password"
-          name="password"
           type="password"
           placeholder="Enter your password"
-          value={formData.password}
-          onChange={handleChange}
-          required
+          {...register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters",
+            },
+          })}
+          className={errors.password ? "border-red-500" : ""}
         />
+        {errors.password && (
+          <p className="text-sm text-red-500">{errors.password.message}</p>
+        )}
       </div>
-      <Button type="submit" className="w-full">
-        Sign In
+
+      <Button
+        type="button"
+        onClick={handleSubmit(onSubmit)}
+        className="w-full cursor-pointer"
+        disabled={!isValid || isSubmitting}
+      >
+        {isSubmitting ? "Signing in..." : "Sign In"}
       </Button>
+
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
         <Link href="/auth/register" className="text-primary hover:underline">
           Sign up
         </Link>
       </div>
-    </form>
+    </div>
   );
 };
 

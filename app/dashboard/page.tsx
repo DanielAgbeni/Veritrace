@@ -16,6 +16,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import api from '@/api';
 import protectRoute from '@/lib/protectedRoutes';
+import Link from 'next/link';
 
 const fetchDashboardStats = async () => {
 	const response = await api.get<DashboardResponseType>(
@@ -81,9 +82,9 @@ const Dashboard = () => {
 							<h3 className="text-lg font-semibold text-gray-800">
 								Recent Activity
 							</h3>
-							<button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+							<Link href="/dashboard/activity" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
 								View All
-							</button>
+							</Link>
 						</div>
 						<div className="space-y-4">
 							{[1, 2, 3, 4].map((i) => (
@@ -131,11 +132,11 @@ const Dashboard = () => {
 										</p>
 									</div>
 								</div>
-								<div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all">
+								<Link href="/dashboard/flour-intake" className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all">
 									<span className="text-lg leading-none">
 										+
 									</span>
-								</div>
+								</Link>
 							</button>
 
 							<button className="w-full flex items-center justify-between px-4 py-4 bg-white border border-gray-200 rounded-xl hover:border-green-500 hover:shadow-md transition-all group">
@@ -155,11 +156,11 @@ const Dashboard = () => {
 										</p>
 									</div>
 								</div>
-								<div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-all">
+								<Link href="/dashboard/productionbatches" className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-all">
 									<span className="text-lg leading-none">
 										+
 									</span>
-								</div>
+								</Link>
 							</button>
 
 							<button className="w-full flex items-center justify-between px-4 py-4 bg-white border border-gray-200 rounded-xl hover:border-purple-500 hover:shadow-md transition-all group">
@@ -179,11 +180,11 @@ const Dashboard = () => {
 										</p>
 									</div>
 								</div>
-								<div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all">
+								<Link href="/dashboard/qr-codes" className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all">
 									<span className="text-lg leading-none">
 										+
 									</span>
-								</div>
+								</Link>
 							</button>
 						</div>
 					</div>

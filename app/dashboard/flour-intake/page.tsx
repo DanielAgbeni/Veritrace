@@ -29,13 +29,13 @@ const { data: flourBatches, isLoading } = useQuery({
     const mutation = useMutation({
         mutationFn: uploadFlourBatch,
         onSuccess: () => {
-			toast('Flour batch uploaded successfully!');
+			toast.success('Flour batch uploaded successfully!');
             queryClient.invalidateQueries({ queryKey: ['flourBatches'] });
             setFormData({ flourType: '', supplier: '', batchNumber: '' });
         },
         onError: (error: any) => {
             console.error('Failed to upload flour batch:', error);
-			alert('Failed to upload flour batch. Please try again.');
+			toast.error('Failed to upload flour batch. Please try again.');
         },
     });
 
@@ -46,7 +46,7 @@ const { data: flourBatches, isLoading } = useQuery({
 
 	const handleSubmit = () => {
 		if (!formData.flourType || !formData.supplier || !formData.batchNumber) {
-			alert('Please fill in all fields.');
+			toast.error('Please fill in all fields.');
 			return;
 		}
 		mutation.mutate(formData);
