@@ -15,8 +15,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
+import { Button } from '../ui/button';
+import { useStore } from '@/lib/useStore';
+import { useRouter } from 'next/navigation';
 
 const DashboardSideBar = () => {
+	const {logout} = useStore()
+	const router = useRouter()
 	const sidebarLinks = [
 		{
 			label: 'Overview',
@@ -49,6 +54,12 @@ const DashboardSideBar = () => {
 
 	const pathname = usePathname();
 	const [isCollapsed, setIsCollapsed] = React.useState(false);
+
+	const handleLogout = () => {
+		logout()
+		router.push('/')
+
+	}
 
 	return (
 		<aside
@@ -96,6 +107,9 @@ const DashboardSideBar = () => {
 					);
 				})}
 			</div>
+			<Button className='cursor-pointer mb-6 mx-2' onClick={handleLogout}>
+				Logout
+			</Button>
 		</aside>
 	);
 };

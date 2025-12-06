@@ -9,6 +9,17 @@ const api = axios.create({
 	signal: controller.signal,
 });
 
+api.interceptors.request.use((config) => {
+	const token =
+		typeof window !== 'undefined'
+			? localStorage.getItem('accessToken')
+			: null;
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
+	return config;
+});
+
 export const setHeaderAuthorization: (token?: string) => void = (token) => {
 		if (token) {
 			api.defaults.headers.common.Authorization = `Bearer ${token}`;
