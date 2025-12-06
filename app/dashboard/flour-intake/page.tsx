@@ -2,8 +2,10 @@
 import api from '@/api';
 import DashboardLayout from '@/components/dashboard/dashboardLayout';
 import protectRoute from '@/lib/protectedRoutes';
-import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { uploadFlourBatch } from '@/lib/flourBatches';
+import { toast } from 'sonner';
 
 const fetchFlourBatches = async () => {
 const response = await api.get<FlourBatchResponseType>(
@@ -12,11 +14,43 @@ const response = await api.get<FlourBatchResponseType>(
 return response.data.data;
 };
 const FlourIntake = () => {
+    const queryClient = useQueryClient();
+    const [formData, setFormData] = useState({
+        flourType: '',
+        supplier: '',
+        batchNumber: '',
+    });
 
 const { data: flourBatches, isLoading } = useQuery({
 		queryKey: ['flourBatches'],
 		queryFn: fetchFlourBatches,
 	});
+
+    const mutation = useMutation({
+        mutationFn: uploadFlourBatch,
+        onSuccess: () => {
+			toast('Flour batch uploaded successfully!');
+            queryClient.invalidateQueries({ queryKey: ['flourBatches'] });
+            setFormData({ flourType: '', supplier: '', batchNumber: '' });
+        },
+        onError: (error: any) => {
+            console.error('Failed to upload flour batch:', error);
+			alert('Failed to upload flour batch. Please try again.');
+        },
+    });
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({ ...prev, [name]: value }));
+	};
+
+	const handleSubmit = () => {
+		if (!formData.flourType || !formData.supplier || !formData.batchNumber) {
+			alert('Please fill in all fields.');
+			return;
+		}
+		mutation.mutate(formData);
+	};
 
  const formatDate = (isoString: string): string => {
   const date = new Date(isoString);
@@ -53,6 +87,9 @@ const { data: flourBatches, isLoading } = useQuery({
 							</label>
 							<input
 								type="text"
+                                name="flourType"
+                                value={formData.flourType}
+                                onChange={handleInputChange}
 								placeholder="e.g., Whole Wheat"
 								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
 							/>
@@ -63,6 +100,9 @@ const { data: flourBatches, isLoading } = useQuery({
 							</label>
 							<input
 								type="text"
+                                name="supplier"
+                                value={formData.supplier}
+                                onChange={handleInputChange}
 								placeholder="Enter supplier name"
 								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
 							/>
@@ -73,13 +113,19 @@ const { data: flourBatches, isLoading } = useQuery({
 							</label>
 							<input
 								type="text"
+                                name="batchNumber"
+                                value={formData.batchNumber}
+                                onChange={handleInputChange}
 								placeholder="Enter batch number"
 								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
 							/>
 						</div>
 						<div className="md:col-span-2 pt-2">
-							<button className="w-full md:w-auto px-8 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 transition-all">
-								Submit Flour Batch
+							<button 
+                                onClick={handleSubmit}
+                                disabled={mutation.isPending}
+                                className="w-full md:w-auto px-8 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+								{mutation.isPending ? 'Submitting...' : 'Submit Flour Batch'}
 							</button>
 						</div>
 					</div>

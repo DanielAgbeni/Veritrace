@@ -80,4 +80,10 @@ declare global {
 		message: string;
 		data: FlourBatchType[];
 	};
+
+	export type FlourBatchUploadRequest = {
+		flourType: string;
+		supplier: string;
+		batchNumber: string;
+	};
 }
