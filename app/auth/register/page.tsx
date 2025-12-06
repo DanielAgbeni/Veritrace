@@ -6,7 +6,7 @@ const Register = () => {
 	return (
 		<div className="flex min-h-screen items-center justify-center p-4">
 			<div className="w-full max-w-md space-y-6 rounded-xl bg-white p-8 shadow-lg">
-				<AuthHeader title="Create Account" />
+				{/* <AuthHeader title="Create Account" /> */}
 				<SignupForm />
 			</div>
 		</div>

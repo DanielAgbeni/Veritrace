@@ -88,11 +88,11 @@ const SigninForm = () => {
           required
         />
       </div>
-      <Button type="submit" className="w-full">
+      <Button type="submit" className="w-full cursor-pointer">
         Sign In
       </Button>
       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
+        Don&apos;t have an account?
         <Link href="/auth/register" className="text-primary hover:underline">
           Sign up
         </Link>
