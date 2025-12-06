@@ -1,9 +1,9 @@
 import api from "@/api";
 
 
-export const signinUser = async (formData: FormData) => {
+export const signinUser = async (formData: FormData): Promise<AuthResponseType> => {
 	try {
-		const response = await api.post(`/api/v1/sign-in`, formData);
+		const response = await api.post<AuthResponseType>(`/api/v1/sign-in`, formData);
 		return response.data;
 	} catch (err: any) {
 		throw new Error(

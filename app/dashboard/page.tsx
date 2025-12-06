@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 const Dashboard = () => {
+
 	return (
 		<DashboardLayout>
 			<div className="p-8">

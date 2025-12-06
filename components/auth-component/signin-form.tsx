@@ -23,43 +23,33 @@ const SigninForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const parseJwt = (token: string) => {
-    try {
-      return JSON.parse(atob(token.split(".")[1]));
-    } catch (e) {
-      return null;
-    }
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Signin Data:", formData);
-    
+    e.preventDefault();    
     const payload = new FormData();
     payload.append("companyMail", formData.email);
     payload.append("password", formData.password);
 
     try {
       const res = await signinUser(payload);
-      const { token } = res;
+      const { token, company } = res;
 
-      if (token) {
+      if (token && company) {
         localStorage.setItem("accessToken", token);
         setHeaderAuthorization(token);
         
-        const decoded = parseJwt(token);
         const user = {
-            id: decoded.companyId,
-            companyName: decoded.companyName,
-            email: formData.email,
-            logo: "",
-            address: "",
-            productDescription: "",
+            id: company._id,
+            companyName: company.name,
+            email: company.mail,
+            logo: company.logo,
+            address: company.address,
+            productDescription: company.description,
         };
 
         localStorage.setItem("authUser", JSON.stringify(user));
         setUser(user);
-        console.log("User signed in successfully", user);
         
         router.push("/dashboard");
       }
