@@ -67,4 +67,23 @@ declare global {
 		message: string;
 		data: DashboardStatsType;
 	};
+
+	export type FlourBatchType = {
+		flourType: string;
+		supplier: string;
+		batchNumber: string;
+		date: string;
+	};
+
+	export type FlourBatchResponseType = {
+		success: boolean;
+		message: string;
+		data: FlourBatchType[];
+	};
+
+	export type FlourBatchUploadRequest = {
+		flourType: string;
+		supplier: string;
+		batchNumber: string;
+	};
 }
