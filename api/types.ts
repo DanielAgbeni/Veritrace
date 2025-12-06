@@ -16,6 +16,21 @@ declare global {
 		totalPage: number;
 	};
 
+	export type CompanyType = {
+		_id: string;
+		name: string;
+		mail: string;
+		address: string;
+		description: string;
+		logo: string;
+	};
+
+	export type AuthResponseType = {
+		message: string;
+		token: string;
+		company: CompanyType;
+	};
+
 	export type ResultPaginationType = {
 		meta: MetaType;
 		pagination: PaginationType;
@@ -40,6 +55,16 @@ declare global {
 	export type ApiRequestResponseType<T> = Promise<AxiosResponse<T>>;
 
 	export type ApiErrorResponseType = AxiosError<ErrorResponseType>;
-}
 
-export {};
+	export type DashboardStatsType = {
+		flourBatches: number;
+		productionBatches: number;
+		totalScans: number;
+	};
+
+	export type DashboardResponseType = {
+		success: boolean;
+		message: string;
+		data: DashboardStatsType;
+	};
+}

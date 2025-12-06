@@ -2,11 +2,22 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 const controller = new AbortController();
 
-const baseURL = process?.env?.NEXT_PUBLIC_BASE_URL;
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL || '';
 
 const api = axios.create({
 	baseURL,
 	signal: controller.signal,
+});
+
+api.interceptors.request.use((config) => {
+	const token =
+		typeof window !== 'undefined'
+			? localStorage.getItem('accessToken')
+			: null;
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
+	return config;
 });
 
 export const setHeaderAuthorization: (token?: string) => void = (token) => {
