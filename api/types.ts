@@ -55,4 +55,16 @@ declare global {
 	export type ApiRequestResponseType<T> = Promise<AxiosResponse<T>>;
 
 	export type ApiErrorResponseType = AxiosError<ErrorResponseType>;
+
+	export type DashboardStatsType = {
+		flourBatches: number;
+		productionBatches: number;
+		totalScans: number;
+	};
+
+	export type DashboardResponseType = {
+		success: boolean;
+		message: string;
+		data: DashboardStatsType;
+	};
 }

@@ -1,6 +1,6 @@
+'use client';
 import DashboardLayout from '@/components/dashboard/dashboardLayout';
 import StatCard from '@/components/general/StatCard';
-import React from 'react';
 import {
 	BarChart3,
 	Package,
@@ -13,8 +13,27 @@ import {
 	Menu,
 	X,
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/api';
+
+const fetchDashboardStats = async () => {
+	const response = await api.get<DashboardResponseType>(
+		'/api/v1/company/dashboard'
+	);
+	return response.data.data;
+};
 
 const Dashboard = () => {
+	const { data: dashboardData, isLoading } = useQuery({
+		queryKey: ['companyDashboard'],
+		queryFn: fetchDashboardStats,
+	});
+
+	const stats = dashboardData || {
+		flourBatches: 0,
+		productionBatches: 0,
+		totalScans: 0,
+	};
 
 	return (
 		<DashboardLayout>
@@ -30,20 +49,26 @@ const Dashboard = () => {
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 					<StatCard
-						title="Total Products"
-						value="142"
+						title="Production Batches"
+						value={
+							isLoading
+								? '...'
+								: stats.productionBatches.toString()
+						}
 						icon={Package}
 						color="blue"
 					/>
 					<StatCard
-						title="Active Batches"
-						value="23"
+						title="Flour Batches"
+						value={
+							isLoading ? '...' : stats.flourBatches.toString()
+						}
 						icon={Wheat}
 						color="green"
 					/>
 					<StatCard
 						title="Total Scans"
-						value="8,547"
+						value={isLoading ? '...' : stats.totalScans.toLocaleString()}
 						icon={QrCode}
 						color="purple"
 					/>
