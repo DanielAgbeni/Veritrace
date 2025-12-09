@@ -69,6 +69,7 @@ declare global {
 	};
 
 	export type FlourBatchType = {
+		_id: string;
 		flourType: string;
 		supplier: string;
 		batchNumber: string;
@@ -85,5 +86,26 @@ declare global {
 		flourType: string;
 		supplier: string;
 		batchNumber: string;
+	};
+
+	export type ProductionBatchFlourDetailType = {
+		_id: string;
+		flourType: string;
+		supplier: string;
+		batchNumber: string;
+	};
+
+	export type ProductionBatchType = {
+		id: string;
+		flourBatchId: ProductionBatchFlourDetailType;
+		bakingStartTime: string;
+		bakingEndTime: string;
+		ovenTemp: number;
+		batchNumber: string;
+	};
+
+	export type ProductionBatchResponseType = {
+		message: string;
+		data: ProductionBatchType[];
 	};
 }
