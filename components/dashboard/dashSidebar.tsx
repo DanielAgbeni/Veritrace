@@ -20,7 +20,7 @@ import { useStore } from '@/lib/useStore';
 import { useRouter } from 'next/navigation';
 
 const DashboardSideBar = () => {
-	const {logout} = useStore()
+	const { logout } = useStore()
 	const router = useRouter()
 	const sidebarLinks = [
 		{
@@ -36,7 +36,7 @@ const DashboardSideBar = () => {
 		},
 		{ href: '/dashboard/qr-codes', label: 'QR Codes', icon: <QrCode /> },
 		{
-			href: '/dashboard/analytics',
+			href: '/dashboard/scan-analytics',
 			label: 'Scan Analytics',
 			icon: <BarChart3 />,
 		},
@@ -46,7 +46,7 @@ const DashboardSideBar = () => {
 			icon: <AlertTriangle />,
 		},
 		{
-			href: '/dashboard/activity-logs',
+			href: '/dashboard/activity-log',
 			label: 'Activity Logs',
 			icon: <Activity />,
 		},
@@ -63,9 +63,8 @@ const DashboardSideBar = () => {
 
 	return (
 		<aside
-			className={`h-full flex flex-col border-r border-gray-200 bg-white transition-all duration-300 ${
-				isCollapsed ? 'w-20' : 'w-64'
-			} shrink-0`}>
+			className={`h-full flex flex-col border-r border-gray-200 bg-white transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'
+				} shrink-0`}>
 			<div className="p-4 border-b border-gray-100 flex items-center justify-between">
 				{!isCollapsed && (
 					<Link href="/" className="flex items-center gap-2">
@@ -78,9 +77,8 @@ const DashboardSideBar = () => {
 				)}
 				<button
 					onClick={() => setIsCollapsed(!isCollapsed)}
-					className={`p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors ${
-						isCollapsed ? 'mx-auto' : ''
-					}`}>
+					className={`p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors ${isCollapsed ? 'mx-auto' : ''
+						}`}>
 					{isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
 				</button>
 			</div>
@@ -92,11 +90,10 @@ const DashboardSideBar = () => {
 							href={link.href}
 							key={link.href}>
 							<div
-								className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-									isActive
-										? 'bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-600'
-										: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-								} ${isCollapsed ? 'justify-center px-2' : ''}`}>
+								className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200 ${isActive
+									? 'bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-600'
+									: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+									} ${isCollapsed ? 'justify-center px-2' : ''}`}>
 								{React.cloneElement(link.icon as any, {
 									size: 20,
 									className: isActive ? 'text-blue-600' : 'text-gray-500',
