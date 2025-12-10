@@ -5,8 +5,10 @@ import { Input } from '@/components/ui/input';
 import protectRoute from '@/lib/protectedRoutes';
 import { createProductionBatch } from '@/lib/productionBatches';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
 import { toast } from 'sonner';
+import QRGeneratorModal from '@/components/dashboard/QRGeneratorModal';
+import { QrCode } from 'lucide-react';
+import React, { useState } from 'react';
 
 const ProductionBatch = () => {
 	const fetchProductionBatches = async () => {
@@ -30,6 +32,8 @@ const ProductionBatch = () => {
 		batchNumber: '',
 		quantityProduced: '',
 	});
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
 
 	const fetchFlourBatches = async () => {
 		const response = await api.get<FlourBatchResponseType>(
@@ -229,6 +233,9 @@ const ProductionBatch = () => {
 									<th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
 										Temperature
 									</th>
+									<th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+										Action
+									</th>
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-100">
@@ -260,6 +267,18 @@ const ProductionBatch = () => {
 											<td className="px-6 py-4 text-sm text-gray-600">
 												{batch.ovenTemp}°C
 											</td>
+                                            <td className="px-6 py-4 text-sm text-gray-600">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedBatchId(batch.id)
+                                                        setIsModalOpen(true)
+                                                    }}
+                                                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-xs bg-blue-50 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors"
+                                                >
+                                                    <QrCode size={14} />
+                                                    Generate QR
+                                                </button>
+                                            </td>
 										</tr>
 									))
 								)}
@@ -267,6 +286,18 @@ const ProductionBatch = () => {
 						</table>
 					</div>
 				</div>
+                <QRGeneratorModal
+                    isOpen={isModalOpen}
+                    onClose={() => {
+                        setIsModalOpen(false)
+                        setSelectedBatchId(null)
+                    }}
+                    preSelectedBatchId={selectedBatchId}
+                    onSuccess={() => {
+                        // Optional: invalidate queries if we tracked 'hasQR' status, but we don't currently.
+                        // Just let user download.
+                    }}
+                />
 			</div>
 		</DashboardLayout>
 	);
