@@ -35,11 +35,11 @@ const DashboardSideBar = () => {
 			icon: <Package />,
 		},
 		{ href: '/dashboard/qr-codes', label: 'QR Codes', icon: <QrCode /> },
-		{
-			href: '/dashboard/scan-analytics',
-			label: 'Scan Analytics',
-			icon: <BarChart3 />,
-		},
+		// {
+		// 	href: '/dashboard/scan-analytics',
+		// 	label: 'Scan Analytics',
+		// 	icon: <BarChart3 />,
+		// },
 		{
 			href: '/dashboard/fraud-alerts',
 			label: 'Fraud Alerts',
