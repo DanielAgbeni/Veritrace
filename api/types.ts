@@ -69,7 +69,7 @@ declare global {
 	};
 
 	export type FlourBatchType = {
-		_id: string;
+		id: string;
 		flourType: string;
 		supplier: string;
 		batchNumber: string;

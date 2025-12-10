@@ -8,8 +8,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
-
-
 const ProductionBatch = () => {
 	const fetchProductionBatches = async () => {
 		const response = await api.get<ProductionBatchResponseType>(
@@ -23,13 +21,14 @@ const ProductionBatch = () => {
 		queryFn: fetchProductionBatches,
 	});
 
-
 	const queryClient = useQueryClient();
 	const [formData, setFormData] = useState({
 		flourBatchId: '',
-		bakingTime: '',
+		bakingStartTime: '',
 		bakingEndTime: '',
 		ovenTemp: '',
+		batchNumber: '',
+		quantityProduced: '',
 	});
 
 	const fetchFlourBatches = async () => {
@@ -44,6 +43,8 @@ const ProductionBatch = () => {
 		queryFn: fetchFlourBatches,
 	});
 
+	console.log(flourBatches);
+
 	const mutation = useMutation({
 		mutationFn: createProductionBatch,
 		onSuccess: () => {
@@ -51,9 +52,11 @@ const ProductionBatch = () => {
 			queryClient.invalidateQueries({ queryKey: ['productionBatches'] });
 			setFormData({
 				flourBatchId: '',
-				bakingTime: '',
+				bakingStartTime: '',
 				bakingEndTime: '',
 				ovenTemp: '',
+				batchNumber: '',
+				quantityProduced: '',
 			});
 		},
 		onError: (error: any) => {
@@ -68,41 +71,30 @@ const ProductionBatch = () => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
+	console.log(formData);
 
 	const handleSubmit = () => {
 		if (
 			!formData.flourBatchId ||
-			!formData.bakingTime ||
+			!formData.bakingStartTime ||
 			!formData.bakingEndTime ||
-			!formData.ovenTemp
+			!formData.ovenTemp ||
+			!formData.batchNumber ||
+			!formData.quantityProduced
 		) {
 			toast.error('Please fill in all fields.');
 			return;
 		}
 
-		const bakingTimeVal = formData.bakingTime; // assuming this is "HH:mm"
-		// Calculate duration or pass as is? 
-		// The API type expected number for bakingTime, but users input a time of day?
-		// Wait, the UI has Baking Start Time and Baking End Time inputs. 
-		// But the previous API response showed bakingTime: 5 (number).
-		// If bakingTime is duration in hours, I should calculate it or change the input.
-		// Assuming user inputs start and end time, I should calculate duration.
-
-		const start = new Date(`1970-01-01T${formData.bakingTime}:00`);
-		const end = new Date(`1970-01-01T${formData.bakingEndTime}:00`);
-		let diff = (end.getTime() - start.getTime()) / 1000 / 60 / 60; // hours
-		if (diff < 0) diff += 24; // Handle overnight
-
 		mutation.mutate({
 			flourBatchId: formData.flourBatchId,
-			bakingTime: diff,
-			ovenTemp: Number(formData.ovenTemp),
+			bakingStartTime: formData.bakingStartTime,
 			bakingEndTime: formData.bakingEndTime,
-			bakingMakeTime: formData.bakingTime,
+			ovenTemp: Number(formData.ovenTemp),
+			batchNumber: `BATCH-${formData.batchNumber}`,
+			quantityProduced: Number(formData.quantityProduced),
 		});
 	};
-
-
 
 	return (
 		<DashboardLayout>
@@ -132,7 +124,7 @@ const ProductionBatch = () => {
 								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
 								<option value="">Select Flour Batch</option>
 								{flourBatches?.map((batch: FlourBatchType) => (
-									<option key={batch._id} value={batch._id}>
+									<option key={batch.id} value={batch.id}>
 										{batch.batchNumber} - {batch.flourType}
 									</option>
 								))}
@@ -144,8 +136,8 @@ const ProductionBatch = () => {
 							</label>
 							<Input
 								type="time"
-								name="bakingTime"
-								value={formData.bakingTime}
+								name="bakingStartTime"
+								value={formData.bakingStartTime}
 								onChange={handleInputChange}
 								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
 							/>
@@ -172,6 +164,35 @@ const ProductionBatch = () => {
 								value={formData.ovenTemp}
 								onChange={handleInputChange}
 								placeholder="e.g., 180"
+								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+							/>
+						</div>
+						<div className="space-y-2">
+							<label className="text-sm font-medium text-gray-700">
+								Batch Number
+							</label>
+							<div className="relative">
+								<span className="absolute left-4 top-2.5 text-gray-500 font-medium">BATCH-</span>
+								<Input
+									type="text"
+									name="batchNumber"
+									value={formData.batchNumber}
+									onChange={handleInputChange}
+									placeholder="105"
+									className="w-full pl-18 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+								/>
+							</div>
+						</div>
+						<div className="space-y-2">
+							<label className="text-sm font-medium text-gray-700">
+								Quantity Produced
+							</label>
+							<Input
+								type="number"
+								name="quantityProduced"
+								value={formData.quantityProduced}
+								onChange={handleInputChange}
+								placeholder="100"
 								className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
 							/>
 						</div>
@@ -239,7 +260,6 @@ const ProductionBatch = () => {
 											<td className="px-6 py-4 text-sm text-gray-600">
 												{batch.ovenTemp}°C
 											</td>
-
 										</tr>
 									))
 								)}
