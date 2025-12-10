@@ -3,46 +3,46 @@ import React from 'react';
 const HeroComponent = () => {
   return (
     <div className="relative w-full min-h-screen flex items-center overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 lg:py-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-8 z-10">
+          <div className="space-y-6 lg:space-y-8 z-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-blue-700">Real-time Tracking</span>
+              <span className="text-xs sm:text-sm font-medium text-blue-700">Real-time Tracking</span>
             </div>
             
-            <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-slate-900 leading-tight">
               Complete Supply Chain
               <span className="block text-primary">Tracebility</span>
             </h1>
             
-            <p className="text-xl text-slate-600 leading-relaxed max-w-lg">
+            <p className="text-base sm:text-xl text-slate-600 leading-relaxed max-w-lg">
               Track every product from origin to destination. Build trust with transparent, verifiable supply chain data.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
+              <button className="px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30 w-full sm:w-auto">
                 Get Started
               </button>
-              <button className="px-8 py-4 bg-white text-slate-900 font-semibold rounded-lg border-2 border-slate-200 hover:border-slate-300 transition-colors">
+              <button className="px-8 py-4 bg-white text-slate-900 font-semibold rounded-lg border-2 border-slate-200 hover:border-slate-300 transition-colors w-full sm:w-auto">
                 Watch Demo
               </button>
             </div>
 
             {/* Stats */}
-            <div className="flex gap-8 pt-8 border-t border-slate-200">
+            <div className="flex gap-4 sm:gap-8 pt-8 border-t border-slate-200">
               <div>
-                <div className="text-3xl font-bold text-slate-900">99.9%</div>
-                <div className="text-sm text-slate-600">Uptime</div>
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900">99.9%</div>
+                <div className="text-xs sm:text-sm text-slate-600">Uptime</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-slate-900">500K+</div>
-                <div className="text-sm text-slate-600">Products Tracked</div>
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900">500K+</div>
+                <div className="text-xs sm:text-sm text-slate-600">Products Tracked</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-slate-900">24/7</div>
-                <div className="text-sm text-slate-600">Monitoring</div>
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900">24/7</div>
+                <div className="text-xs sm:text-sm text-slate-600">Monitoring</div>
               </div>
             </div>
           </div>
