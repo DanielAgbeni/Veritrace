@@ -69,7 +69,7 @@ declare global {
 	};
 
 	export type FlourBatchType = {
-		_id: string;
+		id: string;
 		flourType: string;
 		supplier: string;
 		batchNumber: string;
@@ -107,5 +107,60 @@ declare global {
 	export type ProductionBatchResponseType = {
 		message: string;
 		data: ProductionBatchType[];
+	};
+
+	export type ScanAnalyticsSummaryType = {
+		totalScansToday: number;
+		mostScannedBatch: string;
+		avgScansPerBatch: number;
+	};
+
+	export type ScanAnalyticsTableItemType = {
+		batchId: string;
+		totalScans: number;
+		lastScan: string;
+		trend: string;
+	};
+
+	export type ScanAnalyticsResponseType = {
+		message: string;
+		data: {
+			summary: ScanAnalyticsSummaryType;
+			tableData: ScanAnalyticsTableItemType[];
+		};
+	};
+	export type ActivityLogType = {
+		id: string;
+		action: string;
+		type: 'create' | 'update' | 'delete';
+		user: string;
+		createdAt: string;
+	};
+
+	export type ActivityLogResponseType = {
+		message: string;
+		data: ActivityLogType[];
+	};
+
+	export type FraudAlertBatchDetailType = {
+		_id: string;
+		batchNumber: string;
+	};
+
+	export type FraudAlertType = {
+		_id: string;
+		companyId: string;
+		batchId: FraudAlertBatchDetailType;
+		severity: 'HIGH' | 'MEDIUM' | 'LOW';
+		message: string;
+		isResolved: boolean;
+		createdAt: string;
+		updatedAt: string;
+		__v: number;
+	};
+
+	export type FraudAlertResponseType = {
+		message: string;
+		data: FraudAlertType[];
 	};
 }

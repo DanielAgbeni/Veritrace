@@ -25,10 +25,22 @@ const fetchDashboardStats = async () => {
 	return response.data.data;
 };
 
+const fetchActivityLogs = async () => {
+	const response = await api.get<ActivityLogResponseType>(
+		'/api/v1/company/activity-logs'
+	);
+	return response.data;
+};
+
 const Dashboard = () => {
 	const { data: dashboardData, isLoading } = useQuery({
 		queryKey: ['companyDashboard'],
 		queryFn: fetchDashboardStats,
+	});
+
+	const { data: activityLogs, isLoading: isLogsLoading } = useQuery({
+		queryKey: ['recentActivityLogs'],
+		queryFn: fetchActivityLogs,
 	});
 
 	const stats = dashboardData || {
@@ -87,26 +99,38 @@ const Dashboard = () => {
 							</Link>
 						</div>
 						<div className="space-y-4">
-							{[1, 2, 3, 4].map((i) => (
+							{isLogsLoading ? (
+								<p className="text-sm text-gray-500 text-center py-4">Loading activities...</p>
+							) : activityLogs?.data && activityLogs.data.length > 0 ? (
+								activityLogs.data.slice(0, 5).map((log, i) => (
 								<div
 									key={i}
 									className="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-									<div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+									<div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                                        log.type === 'create' ? 'bg-green-100' : 
+                                        log.type === 'update' ? 'bg-blue-100' : 'bg-red-100'
+                                    }`}>
 										<Activity
 											size={16}
-											className="text-green-600"
+											className={
+                                            log.type === 'create' ? 'text-green-600' : 
+                                            log.type === 'update' ? 'text-blue-600' : 'text-red-600'
+                                        }
 										/>
 									</div>
 									<div className="flex-1">
 										<p className="text-sm font-medium text-gray-900">
-											Batch #{1000 + i} created
+											{log.action}
 										</p>
 										<p className="text-xs text-gray-500 mt-0.5">
-											{i} hours ago
+											{new Date(log.createdAt).toLocaleString()}
 										</p>
 									</div>
 								</div>
-							))}
+							))
+							) : (
+								<p className="text-sm text-gray-500 text-center py-4">No recent activities</p>
+							)}
 						</div>
 					</div>
 

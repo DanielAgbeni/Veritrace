@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { MapPin, Eye, EyeOff } from "lucide-react";
 import { signupUser } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface SignupFormData {
   companyName: string;
@@ -21,6 +23,7 @@ interface SignupFormData {
 }
 
 const SignupForm = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -70,6 +73,7 @@ const SignupForm = () => {
   const onSubmit = async (data: SignupFormData) => {
     const payload = new FormData();
     
+    payload.append("companyName", data.companyName); // Added missing field
     payload.append("password", data.password);
     payload.append("companyMail", data.companyMail);
     payload.append("productDescription", data.productDescription);
@@ -89,9 +93,16 @@ const SignupForm = () => {
 
     console.log("Signup Payload:", payload);
     try {
-      const res = await signupUser(payload)
-    } catch (error) {
-      
+      const res = await signupUser(payload);
+      toast.success("Account created successfully", {
+        description: "Redirecting to login...",
+      });
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 2000);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Failed to create account");
     }
   };
 

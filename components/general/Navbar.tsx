@@ -17,14 +17,21 @@ const Navbar = () => {
           <div className="w-full px-6 lg:px-12 py-4 flex items-center justify-between">
             <Image src={icon} alt='Veritrace' className='w-40'/>
             <div className="flex items-center gap-4">
-              <Link href="/consumer">
+              <Link href="/scan-product">
                 <Button variant="outline">
-                  Consumer Portal
+                  Scan Product
                 </Button>
               </Link>
               <Link href={user ? "/dashboard" : "/auth/login"}>
                 <Button className="cursor-pointer">
-                  Manufacturer Dashboard
+                  {user ? (
+                    <div className="flex items-center gap-2">
+                       {user.logo && <Image src={user.logo} alt="User Logo" width={24} height={24} className="rounded-full" />}
+                       <span>Dashboard</span>
+                    </div>
+                  ) : (
+                    "Manufacturer Dashboard"
+                  )}
                 </Button>
               </Link>
             </div>
