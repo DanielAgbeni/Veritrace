@@ -71,7 +71,7 @@ const SignupForm = () => {
   const onSubmit = async (data: SignupFormData) => {
     const payload = new FormData();
     
-    payload.append("companyName", data.companypName);
+    payload.append("companyName", data.companyName);
     payload.append("companyMail", data.companyMail);
     payload.append("password", data.password);
     payload.append("productDescription", data.productDescription);
