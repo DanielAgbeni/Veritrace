@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,100 +22,100 @@ interface SignupFormData {
   logo: FileList | null;
 }
 
+interface PasswordStrength {
+  strength: number;
+  label: string;
+  color: string;
+}
+
 const SignupForm = () => {
   const router = useRouter();
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<SignupFormData>({
     mode: "onChange",
-    defaultValues: {
-      companyName: "",
-      companyMail: "",
-      password: "",
-      productDescription: "",
-      addressStr: "",
-      streetNo: "",
-      state: "",
-      country: "",
-      logo: null,
-    },
   });
 
-  const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lng: number; lat: number } | null>(null);
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const password = watch("password");
 
-  const handleGetLocation = () => {
+  const handleGetLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      toast.error("Geolocation is not supported by your browser");
       return;
     }
     setLoadingLocation(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setCoordinates([position.coords.longitude, position.coords.latitude]);
+        setCoordinates({
+          lng: position.coords.longitude,
+          lat: position.coords.latitude,
+        });
         setLoadingLocation(false);
+        toast.success("Location captured successfully");
       },
       (error) => {
         console.error("Error getting location:", error);
-        alert("Unable to retrieve your location");
+        toast.error("Unable to retrieve your location");
         setLoadingLocation(false);
       }
     );
-  };
+  }, []);
 
   const onSubmit = async (data: SignupFormData) => {
     const payload = new FormData();
     
-    payload.append("companyName", data.companyName); // Added missing field
-    payload.append("password", data.password);
+    payload.append("companyName", data.companypName);
     payload.append("companyMail", data.companyMail);
+    payload.append("password", data.password);
     payload.append("productDescription", data.productDescription);
+    
+    // Nest address fields properly
     payload.append("companyAddress[streetNo]", data.streetNo);
     payload.append("companyAddress[addressStr]", data.addressStr);
     payload.append("companyAddress[state]", data.state);
     payload.append("companyAddress[country]", data.country);
 
-    if (data.logo && data.logo[0]) {
+    // Add coordinates if available
+    if (coordinates) {
+      payload.append("companyAddress[location][type]", "Point");
+      payload.append("companyAddress[location][coordinates][0]", coordinates.lng.toString());
+      payload.append("companyAddress[location][coordinates][1]", coordinates.lat.toString());
+    }
+
+    // Add logo if provided
+    if (data.logo?.[0]) {
       payload.append("logo", data.logo[0]);
     }
 
-    if (coordinates) {
-      payload.append("companyAddress[location][coordinates][0]", coordinates[0].toString());
-      payload.append("companyAddress[location][coordinates][1]", coordinates[1].toString());
-    }
-
-    console.log("Signup Payload:", payload);
     try {
-      const res = await signupUser(payload);
+      await signupUser(payload);
       toast.success("Account created successfully", {
         description: "Redirecting to login...",
       });
-      setTimeout(() => {
-        router.push("/auth/login");
-      }, 2000);
+      setTimeout(() => router.push("/auth/login"), 2000);
     } catch (error: any) {
-      console.error(error);
+      console.error("Signup error:", error);
       toast.error(error.message || "Failed to create account");
     }
   };
 
   const validatePassword = (value: string) => {
     if (value.length < 8) return "Password must be at least 8 characters";
-    if (!/[A-Z]/.test(value)) return "Password must contain at least one uppercase letter";
-    if (!/[a-z]/.test(value)) return "Password must contain at least one lowercase letter";
-    if (!/[0-9]/.test(value)) return "Password must contain at least one number";
-    if (!/[!@#$%^&*]/.test(value)) return "Password must contain at least one special character (!@#$%^&*)";
+    if (!/[A-Z]/.test(value)) return "Must contain at least one uppercase letter";
+    if (!/[a-z]/.test(value)) return "Must contain at least one lowercase letter";
+    if (!/[0-9]/.test(value)) return "Must contain at least one number";
+    if (!/[!@#$%^&*]/.test(value)) return "Must contain at least one special character (!@#$%^&*)";
     return true;
   };
 
-  const getPasswordStrength = (value: string) => {
+  const getPasswordStrength = useCallback((value: string): PasswordStrength => {
     if (!value) return { strength: 0, label: "", color: "" };
     
     let strength = 0;
@@ -128,12 +128,12 @@ const SignupForm = () => {
     if (strength <= 2) return { strength, label: "Weak", color: "bg-red-500" };
     if (strength <= 4) return { strength, label: "Medium", color: "bg-yellow-500" };
     return { strength, label: "Strong", color: "bg-green-500" };
-  };
+  }, []);
 
-  const passwordStrength = getPasswordStrength(password);
+  const passwordStrength = getPasswordStrength(password || "");
 
   return (
-    <div className="w-full max-w-md space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-4">
       <div className="space-y-2">
         <label htmlFor="companyName" className="text-sm font-medium">
           Company Name
@@ -143,10 +143,7 @@ const SignupForm = () => {
           placeholder="Enter company name"
           {...register("companyName", {
             required: "Company name is required",
-            minLength: {
-              value: 2,
-              message: "Company name must be at least 2 characters",
-            },
+            minLength: { value: 2, message: "Must be at least 2 characters" },
           })}
           className={errors.companyName ? "border-red-500" : ""}
         />
@@ -203,7 +200,7 @@ const SignupForm = () => {
         {password && (
           <div className="space-y-1">
             <div className="flex gap-1">
-              {[...Array(5)].map((_, i) => (
+              {Array.from({ length: 5 }, (_, i) => (
                 <div
                   key={i}
                   className={`h-1 flex-1 rounded ${
@@ -231,10 +228,7 @@ const SignupForm = () => {
           placeholder="Describe your product"
           {...register("productDescription", {
             required: "Product description is required",
-            minLength: {
-              value: 10,
-              message: "Description must be at least 10 characters",
-            },
+            minLength: { value: 10, message: "Must be at least 10 characters" },
           })}
           className={errors.productDescription ? "border-red-500" : ""}
         />
@@ -251,9 +245,7 @@ const SignupForm = () => {
           <Input
             id="streetNo"
             placeholder="22A"
-            {...register("streetNo", {
-              required: "Street number is required",
-            })}
+            {...register("streetNo", { required: "Street number is required" })}
             className={errors.streetNo ? "border-red-500" : ""}
           />
           {errors.streetNo && (
@@ -267,9 +259,7 @@ const SignupForm = () => {
           <Input
             id="addressStr"
             placeholder="Animat Street"
-            {...register("addressStr", {
-              required: "Street address is required",
-            })}
+            {...register("addressStr", { required: "Street address is required" })}
             className={errors.addressStr ? "border-red-500" : ""}
           />
           {errors.addressStr && (
@@ -286,9 +276,7 @@ const SignupForm = () => {
           <Input
             id="state"
             placeholder="Lagos"
-            {...register("state", {
-              required: "State is required",
-            })}
+            {...register("state", { required: "State is required" })}
             className={errors.state ? "border-red-500" : ""}
           />
           {errors.state && (
@@ -302,9 +290,7 @@ const SignupForm = () => {
           <Input
             id="country"
             placeholder="Nigeria"
-            {...register("country", {
-              required: "Country is required",
-            })}
+            {...register("country", { required: "Country is required" })}
             className={errors.country ? "border-red-500" : ""}
           />
           {errors.country && (
@@ -315,25 +301,19 @@ const SignupForm = () => {
 
       <div className="space-y-2">
         <label className="text-sm font-medium">Location (Optional)</label>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleGetLocation}
-            disabled={loadingLocation}
-            className="w-full"
-          >
-            <MapPin className="mr-2 h-4 w-4" />
-            {loadingLocation
-              ? "Getting Location..."
-              : coordinates
-              ? "Location Captured"
-              : "Get Current Location"}
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGetLocation}
+          disabled={loadingLocation}
+          className="w-full"
+        >
+          <MapPin className="mr-2 h-4 w-4" />
+          {loadingLocation ? "Getting Location..." : coordinates ? "Location Captured" : "Get Current Location"}
+        </Button>
         {coordinates && (
           <p className="text-xs text-muted-foreground">
-            Lat: {coordinates[1].toFixed(4)}, Long: {coordinates[0].toFixed(4)}
+            Lat: {coordinates.lat.toFixed(4)}, Long: {coordinates.lng.toFixed(4)}
           </p>
         )}
       </div>
@@ -352,9 +332,8 @@ const SignupForm = () => {
       </div>
 
       <Button
-        type="button"
-        onClick={handleSubmit(onSubmit)}
-        className="w-full cursor-pointer"
+        type="submit"
+        className="w-full"
         disabled={!isValid || isSubmitting}
       >
         {isSubmitting ? "Creating Account..." : "Sign Up"}
@@ -366,7 +345,7 @@ const SignupForm = () => {
           Sign in
         </Link>
       </div>
-    </div>
+    </form>
   );
 };
 
